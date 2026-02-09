@@ -1,0 +1,12 @@
+streamlit
+pymupdf
+numpy
+pdfplumber
+pandas
+openpyxl
+deep-translator
+wordcloud
+matplotlib
+Pillow
+spacy
+scikit-learn
