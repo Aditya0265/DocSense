@@ -237,14 +237,4 @@ Open browser:
 
 ------------------------------------------------------------------------
 
-## 👨‍💻 Author
 
-Built as an applied **Document Intelligence + AI Systems** project
-demonstrating: - PDF engineering workflows - Semantic retrieval
-techniques - Applied ML pipelines - Full-stack AI UI integration
-
-------------------------------------------------------------------------
-
-## 📜 License
-
-Educational / Portfolio Use
