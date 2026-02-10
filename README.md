@@ -19,25 +19,33 @@ and lightweight machine learning-based semantic ranking to help users
 quickly identify relevant sections of documents based on user roles and
 job tasks.
 
-This project demonstrates practical implementation of: - PDF text and
-image extraction - Document hierarchy detection - Semantic document
-ranking - Interactive Streamlit-based user interface
+This project demonstrates practical implementation of:
+- PDF text and image extraction
+- Document hierarchy detection
+- Semantic document ranking
+- Readability & text complexity analysis
+- PII detection and PDF redaction
+- Interactive Streamlit-based user interface
 
 ------------------------------------------------------------------------
 
 ## 🧠 System Workflow
 
-    PDF Upload
-       ↓
-    Text + Image Extraction
-       ↓
-    Document Structure Detection
-       ↓
-    Persona + Task Mapping
-       ↓
-    Semantic Ranking (TF-IDF + Cosine Similarity)
-       ↓
-    Structured Results + Export
+```
+PDF Upload
+   ↓
+Text + Image Extraction
+   ↓
+Document Structure Detection
+   ↓
+Readability Scoring & Text Analytics
+   ↓
+Persona + Task Mapping
+   ↓
+Semantic Ranking (TF-IDF + Cosine Similarity)
+   ↓
+Redaction / Export / Structured Results
+```
 
 ------------------------------------------------------------------------
 
@@ -55,7 +63,7 @@ ranking - Interactive Streamlit-based user interface
 ### 🧠 Document Structure Intelligence
 
 -   Title detection
--   Heading detection (H1--H3 approximation)
+-   Heading detection (H1–H3 approximation)
 -   Font-based clustering using KMeans
 -   Converts raw PDFs into structured document representation
 
@@ -86,11 +94,42 @@ ranking - Interactive Streamlit-based user interface
 
 ------------------------------------------------------------------------
 
+### 📖 Readability Analysis
+
+-   **Flesch Reading Ease** — overall readability score (0–100)
+-   **Flesch-Kincaid Grade Level** — U.S. school grade equivalent
+-   **Gunning Fog Index** — years of education needed to understand
+-   **Coleman-Liau Index** — character-based grade level estimate
+-   Estimated reading time (based on 200 WPM)
+-   Word count, sentence count, and average sentence length
+-   Complexity breakdown with visual bar (simple vs complex words)
+-   Human-friendly reading level labels (e.g., "Standard (8th–9th Grade)")
+
+------------------------------------------------------------------------
+
+### 🛡️ PDF Redaction Tool
+
+-   Redact sensitive information by drawing black rectangles over matched text
+-   **Custom keywords** — enter any words or phrases to black out
+-   **5 built-in PII patterns:**
+    -   Email addresses
+    -   Phone numbers
+    -   Dates (DD/MM/YYYY)
+    -   URLs
+    -   Currency amounts ($, £, €, ₹)
+-   **Custom regex** — supply your own pattern for advanced redaction
+-   Per-page redaction count with bar chart visualization
+-   Download the redacted PDF directly from the app
+
+------------------------------------------------------------------------
+
 ### 📦 Export & Output Management
 
 -   Structured output folders
 -   Extracted images ZIP download
 -   Extracted text export
+-   Excel export for extracted tables
+-   Redacted PDF download
 -   Temporary file cleanup
 
 ------------------------------------------------------------------------
@@ -99,6 +138,7 @@ ranking - Interactive Streamlit-based user interface
 
 -   Built using Streamlit
 -   Custom CSS dark theme
+-   10-tab dashboard: Metadata · Structure · Reader · Tables · Visuals · Readability · Gallery · Export · Redact · Persona AI
 -   Clean upload → analyze → download workflow
 
 ------------------------------------------------------------------------
@@ -128,6 +168,12 @@ ranking - Interactive Streamlit-based user interface
 -   Regex
 -   Unicode normalization
 
+### Text Analytics
+
+-   Flesch Reading Ease / Flesch-Kincaid (custom implementation)
+-   Gunning Fog Index (custom implementation)
+-   Coleman-Liau Index (custom implementation)
+
 ### OCR (Optional)
 
 -   Tesseract OCR
@@ -142,20 +188,27 @@ ranking - Interactive Streamlit-based user interface
 
 ------------------------------------------------------------------------
 
-## 📂 Typical Project Structure
+## 📂 Project Structure
 
-    PDF-Extractor-Pro/
-    │
-    ├ app.py
-    ├ requirements.txt
-    │
-    ├ src/
-    │ ├ extractor.py
-    │ ├ persona_engine.py
-    │ ├ utils.py
-    │
-    ├ downloads/
-    ├ uploads/
+```
+PDF-Extractor-Pro/
+│
+├── app.py                  # Main Streamlit application
+├── requirements.txt        # Python dependencies
+├── Dockerfile              # Docker containerization
+├── README.md
+│
+├── src/
+│   ├── __init__.py
+│   ├── extractor.py        # PDF text, image, table extraction + OCR
+│   ├── persona_intel.py    # Persona-based semantic ranking (TF-IDF)
+│   ├── readability.py      # Readability scoring & text metrics
+│   ├── redactor.py         # PII detection & PDF redaction
+│   └── utils.py            # File handling, validation, cleanup
+│
+├── downloads/              # Output directory (generated at runtime)
+└── temp_uploads/           # Temporary upload storage (auto-cleaned)
+```
 
 ------------------------------------------------------------------------
 
@@ -163,41 +216,55 @@ ranking - Interactive Streamlit-based user interface
 
 ### 1️⃣ Clone Repository
 
-    git clone <repo-url>
-    cd PDF-Extractor-Pro
+```bash
+git clone https://github.com/Aditya0265/PDF-Extractor-Pro.git
+cd PDF-Extractor-Pro
+```
 
 ------------------------------------------------------------------------
 
 ### 2️⃣ Create Virtual Environment (Recommended)
 
-    python -m venv venv
+```bash
+python -m venv venv
+```
 
 Activate:
 
 Windows:
 
-    venv\Scripts\activate
+```bash
+venv\Scripts\activate
+```
 
 Mac / Linux:
 
-    source venv/bin/activate
+```bash
+source venv/bin/activate
+```
 
 ------------------------------------------------------------------------
 
 ### 3️⃣ Install Dependencies
 
-    python -m pip install --upgrade pip
-    python -m pip install -r requirements.txt
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
 
 ------------------------------------------------------------------------
 
 ## ▶️ Run Application
 
-    python -m streamlit run app.py
+```bash
+python -m streamlit run app.py
+```
 
 Open browser:
 
-    http://localhost:8501
+```
+http://localhost:8501
+```
 
 ------------------------------------------------------------------------
 
@@ -207,6 +274,8 @@ Open browser:
 -   Policy document review
 -   Business document filtering
 -   Academic document intelligence demos
+-   Readability assessment of reports and publications
+-   Redacting PII before sharing documents externally
 -   Hackathon and portfolio demonstration
 
 ------------------------------------------------------------------------
@@ -219,6 +288,8 @@ Open browser:
 -   Very large PDFs may increase processing time
 -   Currently optimized for **English-language PDFs only**
 -   Non-English documents may produce inaccurate structure detection or semantic ranking
+-   Readability formulas are designed for English text
+-   Redaction works on text-based PDFs; scanned/image-only PDFs require OCR first
 
 ------------------------------------------------------------------------
 
@@ -229,7 +300,7 @@ Open browser:
 -   Multi-document semantic search
 -   Auto summarization
 -   Cloud deployment support
+-   Batch redaction across multiple PDFs
+-   Named Entity Recognition (NER) for smarter PII detection
 
 ------------------------------------------------------------------------
-
-
