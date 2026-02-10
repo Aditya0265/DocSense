@@ -278,12 +278,12 @@ if st.session_state.processed:
         full_text_content = ""
 
     # Navigation
-    t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 = st.tabs([
-        "Metadata", "Structure", "Reader", "Tables", "Visuals", "Readability", "Gallery", "Export", "Redact", "Persona AI"
+    tab_meta, tab_struct, tab_read, tab_reader, tab_redact, tab_persona, tab_tables, tab_visuals, tab_gallery, tab_export = st.tabs([
+        "Metadata", "Structure", "Readability", "Reader", "Redact", "Persona AI", "Tables", "Visuals", "Gallery", "Export"
     ])
 
     # 1. Metadata
-    with t1:
+    with tab_meta:
         st.markdown("""
             <div class="section-header">
                 <div class="header-icon-box"><span class="material-symbols-rounded">info</span></div>
@@ -309,7 +309,7 @@ if st.session_state.processed:
             with st.container(border=True): st.caption("CREATED"); st.markdown(f"**{pdf_meta.get('creationDate', 'Unknown').replace('D:', '').split('+')[0]}**")
 
     # 2. Structure
-    with t2:
+    with tab_struct:
         st.markdown("""
             <div class="section-header">
                 <div class="header-icon-box"><span class="material-symbols-rounded">toc</span></div>
@@ -329,69 +329,8 @@ if st.session_state.processed:
         else:
             st.info("No bookmarks found.")
 
-    # 3. Reader
-    with t3:
-        st.markdown("""
-            <div class="section-header">
-                <div class="header-icon-box"><span class="material-symbols-rounded">translate</span></div>
-                <div class="header-text">Universal Reader</div>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        langs = {"Spanish": "es", "French": "fr", "German": "de", "Hindi": "hi", "Chinese": "zh-CN"}
-        col_ctrl, col_fill = st.columns([1, 3])
-        with col_ctrl:
-            sel_lang = st.selectbox("Translate to:", ["None"] + list(langs.keys()), label_visibility="collapsed")
-        
-        if sel_lang != "None" and st.button("Translate Text", use_container_width=True):
-            with st.spinner("Translating..."):
-                res = translate_content(full_text_content[:5000], langs.get(sel_lang))
-                if len(full_text_content) > 5000: res += "\n\n[Truncated]"
-                st.session_state.translated_text = res
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        c1, c2 = st.columns(2)
-        with c1: 
-            st.caption("ORIGINAL TEXT")
-            st.text_area("Original", full_text_content, height=500, label_visibility="collapsed")
-        with c2: 
-            st.caption(f"TRANSLATED ({sel_lang})")
-            st.text_area("Translated", st.session_state.translated_text, height=500, label_visibility="collapsed")
-
-    # 4. Tables
-    with t4:
-        st.markdown("""
-            <div class="section-header">
-                <div class="header-icon-box"><span class="material-symbols-rounded">table_chart</span></div>
-                <div class="header-text">Extracted Tables</div>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        if tables:
-            for i, tbl in enumerate(tables):
-                with st.expander(f"Table {i+1} (Page {tbl['page']})"): st.dataframe(tbl['dataframe'], use_container_width=True)
-        else:
-            st.warning("No tables detected in this document.")
-
-    # 5. Visuals
-    with t5:
-        st.markdown("""
-            <div class="section-header">
-                <div class="header-icon-box"><span class="material-symbols-rounded">cloud</span></div>
-                <div class="header-text">Visual Analysis</div>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        if full_text_content:
-            try:
-                wc = WordCloud(width=800, height=400, background_color='#0E1117', mode="RGBA", colormap='cool').generate(full_text_content)
-                fig, ax = plt.subplots(figsize=(10, 5))
-                ax.imshow(wc, interpolation='bilinear'); ax.axis("off"); fig.patch.set_alpha(0)
-                st.pyplot(fig); plt.close(fig)
-            except: st.error("Word Cloud generation failed.")
-
-    # 6. Readability
-    with t6:
+    # 3. Readability
+    with tab_read:
         st.markdown("""
             <div class="section-header">
                 <div class="header-icon-box"><span class="material-symbols-rounded">menu_book</span></div>
@@ -482,73 +421,37 @@ if st.session_state.processed:
         else:
             st.warning("No text available for readability analysis.")
 
-    # 7. Gallery
-    with t7:
-        st.markdown(f"""
-            <div class="section-header">
-                <div class="header-icon-box"><span class="material-symbols-rounded">image</span></div>
-                <div class="header-text">Gallery ({data["img_count"]})</div>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        if data["img_count"] > 0:
-            images = [os.path.join(data["output_dir"], "images", x) for x in os.listdir(os.path.join(data["output_dir"], "images")) if x.endswith(('png','jpg','jpeg'))]
-            cols = st.columns(4)
-            for i, img in enumerate(images):
-                with cols[i%4]:
-                    with st.container(border=True):
-                        st.image(img, use_container_width=True)
-                        st.caption(f"Image {i+1}")
-        else:
-            st.info("No images extracted.")
-
-    # 8. Export
-    with t8:
+    # 4. Reader
+    with tab_reader:
         st.markdown("""
             <div class="section-header">
-                <div class="header-icon-box"><span class="material-symbols-rounded">download</span></div>
-                <div class="header-text">Export</div>
+                <div class="header-icon-box"><span class="material-symbols-rounded">translate</span></div>
+                <div class="header-text">Universal Reader</div>
             </div>
         """, unsafe_allow_html=True)
         
-        c1, c2, c3, c4 = st.columns(4)
+        langs = {"Spanish": "es", "French": "fr", "German": "de", "Hindi": "hi", "Chinese": "zh-CN"}
+        col_ctrl, col_fill = st.columns([1, 3])
+        with col_ctrl:
+            sel_lang = st.selectbox("Translate to:", ["None"] + list(langs.keys()), label_visibility="collapsed")
         
-        with c1:
-            with st.container(border=True):
-                st.markdown("**Plain Text**")
-                st.download_button("Download .txt", full_text_content, f"{data['filename']}.txt", use_container_width=True)
+        if sel_lang != "None" and st.button("Translate Text", use_container_width=True):
+            with st.spinner("Translating..."):
+                res = translate_content(full_text_content[:5000], langs.get(sel_lang))
+                if len(full_text_content) > 5000: res += "\n\n[Truncated]"
+                st.session_state.translated_text = res
         
-        with c2:
-            with st.container(border=True):
-                st.markdown("**Structure**")
-                export_struct = {"metadata": {"filename": data['filename'], "pdf_properties": pdf_meta}, "structure": struct}
-                if 'tables' in export_struct['structure']: del export_struct['structure']['tables']
-                st.download_button("Download .json", json.dumps(export_struct, indent=2, default=str), f"{data['filename']}_data.json", use_container_width=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        c1, c2 = st.columns(2)
+        with c1: 
+            st.caption("ORIGINAL TEXT")
+            st.text_area("Original", full_text_content, height=500, label_visibility="collapsed")
+        with c2: 
+            st.caption(f"TRANSLATED ({sel_lang})")
+            st.text_area("Translated", st.session_state.translated_text, height=500, label_visibility="collapsed")
 
-        with c3:
-            with st.container(border=True):
-                st.markdown("**Images**")
-                if data["img_count"] > 0 and data["zip_path"]:
-                    with open(data["zip_path"], "rb") as f: st.download_button("Download .zip", f, f"{data['filename']}_imgs.zip", use_container_width=True)
-                else:
-                    st.button("No Images", disabled=True, use_container_width=True)
-                    
-        with c4:
-            with st.container(border=True):
-                st.markdown("**Excel Tables**")
-                if tables:
-                    output = BytesIO()
-                    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                        for i, tbl in enumerate(tables):
-                            sheet_name = f"Table_{i+1}_Pg{tbl['page']}"
-                            tbl['dataframe'].to_excel(writer, sheet_name=sheet_name, index=False)
-                    output.seek(0)
-                    st.download_button("Download .xlsx", output, f"{data['filename']}_tables.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
-                else:
-                    st.button("No Tables", disabled=True, use_container_width=True)
-
-    # 9. Redact
-    with t9:
+    # 5. Redact
+    with tab_redact:
         st.markdown("""
             <div class="section-header">
                 <div class="header-icon-box"><span class="material-symbols-rounded">shield</span></div>
@@ -650,15 +553,8 @@ if st.session_state.processed:
                             use_container_width=True,
                         )
 
-    # --- FOOTER ---
-    st.markdown("""
-        <div class="footer" style="text-align:center; padding:40px 0; color:#64748b; font-size:0.8rem; border-top:1px solid rgba(255,255,255,0.05);">
-            <p>PDF Extractor Pro &copy; 2024</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # 10. Persona AI (Challenge 1B-style)
-    with t10:
+    # 6. Persona AI (Challenge 1B-style)
+    with tab_persona:
         st.markdown(
             '''
             <div class="section-header">
@@ -728,3 +624,107 @@ if st.session_state.processed:
                 )
             else:
                 st.info("No relevant sections found (or PDF text could not be extracted).")
+
+    # 7. Tables
+    with tab_tables:
+        st.markdown("""
+            <div class="section-header">
+                <div class="header-icon-box"><span class="material-symbols-rounded">table_chart</span></div>
+                <div class="header-text">Extracted Tables</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        if tables:
+            for i, tbl in enumerate(tables):
+                with st.expander(f"Table {i+1} (Page {tbl['page']})"): st.dataframe(tbl['dataframe'], use_container_width=True)
+        else:
+            st.warning("No tables detected in this document.")
+
+    # 8. Visuals
+    with tab_visuals:
+        st.markdown("""
+            <div class="section-header">
+                <div class="header-icon-box"><span class="material-symbols-rounded">cloud</span></div>
+                <div class="header-text">Visual Analysis</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        if full_text_content:
+            try:
+                wc = WordCloud(width=800, height=400, background_color='#0E1117', mode="RGBA", colormap='cool').generate(full_text_content)
+                fig, ax = plt.subplots(figsize=(10, 5))
+                ax.imshow(wc, interpolation='bilinear'); ax.axis("off"); fig.patch.set_alpha(0)
+                st.pyplot(fig); plt.close(fig)
+            except: st.error("Word Cloud generation failed.")
+
+    # 9. Gallery
+    with tab_gallery:
+        st.markdown(f"""
+            <div class="section-header">
+                <div class="header-icon-box"><span class="material-symbols-rounded">image</span></div>
+                <div class="header-text">Gallery ({data["img_count"]})</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        if data["img_count"] > 0:
+            images = [os.path.join(data["output_dir"], "images", x) for x in os.listdir(os.path.join(data["output_dir"], "images")) if x.endswith(('png','jpg','jpeg'))]
+            cols = st.columns(4)
+            for i, img in enumerate(images):
+                with cols[i%4]:
+                    with st.container(border=True):
+                        st.image(img, use_container_width=True)
+                        st.caption(f"Image {i+1}")
+        else:
+            st.info("No images extracted.")
+
+    # 10. Export
+    with tab_export:
+        st.markdown("""
+            <div class="section-header">
+                <div class="header-icon-box"><span class="material-symbols-rounded">download</span></div>
+                <div class="header-text">Export</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        c1, c2, c3, c4 = st.columns(4)
+        
+        with c1:
+            with st.container(border=True):
+                st.markdown("**Plain Text**")
+                st.download_button("Download .txt", full_text_content, f"{data['filename']}.txt", use_container_width=True)
+        
+        with c2:
+            with st.container(border=True):
+                st.markdown("**Structure**")
+                export_struct = {"metadata": {"filename": data['filename'], "pdf_properties": pdf_meta}, "structure": struct}
+                if 'tables' in export_struct['structure']: del export_struct['structure']['tables']
+                st.download_button("Download .json", json.dumps(export_struct, indent=2, default=str), f"{data['filename']}_data.json", use_container_width=True)
+
+        with c3:
+            with st.container(border=True):
+                st.markdown("**Images**")
+                if data["img_count"] > 0 and data["zip_path"]:
+                    with open(data["zip_path"], "rb") as f: st.download_button("Download .zip", f, f"{data['filename']}_imgs.zip", use_container_width=True)
+                else:
+                    st.button("No Images", disabled=True, use_container_width=True)
+                    
+        with c4:
+            with st.container(border=True):
+                st.markdown("**Excel Tables**")
+                if tables:
+                    output = BytesIO()
+                    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                        for i, tbl in enumerate(tables):
+                            sheet_name = f"Table_{i+1}_Pg{tbl['page']}"
+                            tbl['dataframe'].to_excel(writer, sheet_name=sheet_name, index=False)
+                    output.seek(0)
+                    st.download_button("Download .xlsx", output, f"{data['filename']}_tables.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
+                else:
+                    st.button("No Tables", disabled=True, use_container_width=True)
+
+    # --- FOOTER ---
+    st.markdown("""
+        <div class="footer" style="text-align:center; padding:40px 0; color:#64748b; font-size:0.8rem; border-top:1px solid rgba(255,255,255,0.05);">
+            <p>PDF Extractor Pro &copy; 2024</p>
+        </div>
+    """, unsafe_allow_html=True)
