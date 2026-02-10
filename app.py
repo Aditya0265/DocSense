@@ -27,7 +27,7 @@ from src.redactor import redact_pdf, get_available_patterns
 
 # --- 2. PAGE CONFIGURATION ---
 st.set_page_config(
-    page_title="PDF Extractor Pro",
+    page_title="DocSense",
     #page_icon="💎",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -191,7 +191,7 @@ if 'translated_text' not in st.session_state: st.session_state.translated_text =
 # Header
 st.markdown("""
     <div class="main-header">
-        <div class="main-title">PDF Extractor Pro</div>
+        <div class="main-title">DocSense</div>
         <div class="sub-title">Simple Extraction. Powerful Insights.</div>
     </div>
 """, unsafe_allow_html=True)
@@ -725,6 +725,6 @@ if st.session_state.processed:
     # --- FOOTER ---
     st.markdown("""
         <div class="footer" style="text-align:center; padding:40px 0; color:#64748b; font-size:0.8rem; border-top:1px solid rgba(255,255,255,0.05);">
-            <p>PDF Extractor Pro &copy; 2024</p>
+            <p>DocSense; 2024</p>
         </div>
     """, unsafe_allow_html=True)
