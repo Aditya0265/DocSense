@@ -191,6 +191,7 @@ DocSense/
 ├── src/
 │   ├── __init__.py
 │   ├── extractor.py        # PDF text, image, table extraction + OCR + translation
+│   ├── page_clustering.py  # Page topic clustering (TF-IDF + KMeans topic grouping)
 │   ├── persona_intel.py    # Persona-based semantic ranking (TF-IDF + cosine)
 │   ├── readability.py      # Readability scoring (4 indices + text stats)
 │   ├── redactor.py         # PII detection + PDF redaction (regex + PyMuPDF)
