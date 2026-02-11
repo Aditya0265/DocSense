@@ -23,6 +23,7 @@ It combines classical PDF parsing, ML-powered structure detection, readability s
 - Regex-based PII detection and permanent PDF redaction
 - Multilingual translation support
 - Professional Streamlit web interface with 10-tab dashboard
+- Page topic clustering for thematic grouping across pages (Visuals tab)
 
 ------------------------------------------------------------------------
 
@@ -120,6 +121,7 @@ Export (TXT, JSON, XLSX, ZIP, Redacted PDF)
 
 - Word Cloud generation from extracted text
 - Dark-themed visualization matching the app's UI
+- Page Topic Clustering — groups pages into topics using TF-IDF + clustering, helping you quickly spot themes across long PDFs
 
 ------------------------------------------------------------------------
 
@@ -170,7 +172,7 @@ Metadata → Structure → Readability → Reader → Redact → Persona AI → 
 | **Readability** | Custom Python (Flesch, Fog, Coleman-Liau formulas) |
 | **OCR** | pytesseract, Pillow (optional — requires Tesseract) |
 | **Translation** | deep-translator (Google Translate wrapper) |
-| **Visualization** | Matplotlib, WordCloud |
+| **Visualization** | Matplotlib, WordCloud, Topic Cluster Visualization (Page Topic Clustering Visuals) |
 | **Data Handling** | Pandas, NumPy, openpyxl |
 | **Containerization** | Docker |
 
